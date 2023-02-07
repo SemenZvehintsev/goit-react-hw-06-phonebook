@@ -1,10 +1,12 @@
 import { useState } from "react";
-import PropTypes from 'prop-types';
 import styles from 'components/ContactForm/ContactForm.module.css'
+import { useDispatch, useSelector } from "react-redux";
+import { getContacts } from "redux/selectors";
+import { addContact } from "redux/contacts.slice";
 
-
-export const ContactForm = ({contacts, onSubmitAdd}) => {
-
+export const ContactForm = () => {
+    const dispatch = useDispatch();
+    const contacts = useSelector(getContacts);
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
 
@@ -13,13 +15,11 @@ export const ContactForm = ({contacts, onSubmitAdd}) => {
         if (contacts.map(({contactName}) => contactName.toLowerCase()).includes(name.toLowerCase())) { 
             alert(`${name} is already in contacts.`)} 
         else {
-            onSubmitAdd(name, number);
+            dispatch(addContact(name, number));
             setName('');
             setNumber('');
         }
     }
-
-
 
     return <form className={styles.form} onSubmit={handleSubmit}>
         <label htmlFor="name">Name
@@ -53,13 +53,3 @@ export const ContactForm = ({contacts, onSubmitAdd}) => {
         <button className={styles.button} type="submit">Add contact</button>
     </form>
 }
-
-
-ContactForm.propTypes = {
-    contacts: PropTypes.arrayOf(PropTypes.exact({
-        id: PropTypes.string.isRequired,
-        contactName: PropTypes.string.isRequired,
-        contactNumber: PropTypes.string.isRequired
-    }).isRequired).isRequired,
-    onSubmitAdd: PropTypes.func.isRequired
-};
